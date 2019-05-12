@@ -28,7 +28,7 @@ class Maze {
     /// A node in a grid-based graph representing the ending point of the maze.
     var endNode: GKGridGraphNode
     
-    var treasureNodes: [GKGridGraphNode]
+    var treasureNodes: [GKGridGraphNode] = []
     
     /**
         Computes a solution to the maze by using GameplayKit's pathfinding
@@ -66,8 +66,6 @@ class Maze {
         */
         startNode = graph.node(atGridPosition: int2(0, Int32(Maze.dimensions - 1)))!
         endNode   = graph.node(atGridPosition: int2(Int32(Maze.dimensions - 1), 0))!
-        
-        treasureNodes = []
        
         
         /*
@@ -79,17 +77,9 @@ class Maze {
         let mazeWalls = mazeBuilder.mazeWallsForRemoval()
         graph.remove(mazeWalls)
         
-        // quick and dirty treasureNodes builder
-        for x in 1..<Maze.dimensions {
-            for y in 1..<Maze.dimensions {
-                let on = graph.node(atGridPosition: int2(Int32(x),Int32(y)))
-                // "let n = on" unwraps the optional value stored in "on"
-                if let n = on {
-                    if Int.random(in: 1...100) % 50 == 0 {
-                        treasureNodes.append(n)
-                    }
-                }
-            }
-        }
+        /*
+            Create a TreasureSpreader to generate a random set of treasures.
+        */
+        treasureNodes = TreasureSpreader(maze: self).buryTreasure()
     }
 }
