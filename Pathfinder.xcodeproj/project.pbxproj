@@ -18,6 +18,9 @@
 		A13700B922888A1800E70463 /* TreasureSpreader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13700B822888A1800E70463 /* TreasureSpreader.swift */; };
 		A13700BA22888A1800E70463 /* TreasureSpreader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13700B822888A1800E70463 /* TreasureSpreader.swift */; };
 		A13700BB22888A1800E70463 /* TreasureSpreader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13700B822888A1800E70463 /* TreasureSpreader.swift */; };
+		A13700BD22889ED300E70463 /* EnemyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13700BC22889ED200E70463 /* EnemyGenerator.swift */; };
+		A13700BE22889ED300E70463 /* EnemyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13700BC22889ED200E70463 /* EnemyGenerator.swift */; };
+		A13700BF22889ED300E70463 /* EnemyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13700BC22889ED200E70463 /* EnemyGenerator.swift */; };
 		A1A77920227F7EA10014CDD2 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A7791F227F7EA10014CDD2 /* Player.swift */; };
 		A1A77921227F7EA10014CDD2 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A7791F227F7EA10014CDD2 /* Player.swift */; };
 		A1A77922227F7EA10014CDD2 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A7791F227F7EA10014CDD2 /* Player.swift */; };
@@ -48,6 +51,7 @@
 		112FE97D1C5999130064E15F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		112FE9811C5999130064E15F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A13700B822888A1800E70463 /* TreasureSpreader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreasureSpreader.swift; sourceTree = "<group>"; };
+		A13700BC22889ED200E70463 /* EnemyGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyGenerator.swift; sourceTree = "<group>"; };
 		A1A7791F227F7EA10014CDD2 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		A1A77923227F7ECE0014CDD2 /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 		A40581251B7C08C100E0EC65 /* Maze.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Maze.swift; sourceTree = "<group>"; };
@@ -152,6 +156,7 @@
 		A4AA55441B6ACAA5008D3323 /* Pathfinder */ = {
 			isa = PBXGroup;
 			children = (
+				A13700BC22889ED200E70463 /* EnemyGenerator.swift */,
 				A13700B822888A1800E70463 /* TreasureSpreader.swift */,
 				A40581251B7C08C100E0EC65 /* Maze.swift */,
 				A1A7791F227F7EA10014CDD2 /* Player.swift */,
@@ -310,6 +315,7 @@
 				112FE9871C5999650064E15F /* Maze.swift in Sources */,
 				A1A77922227F7EA10014CDD2 /* Player.swift in Sources */,
 				112FE98A1C5999650064E15F /* MazeBuilder.swift in Sources */,
+				A13700BF22889ED300E70463 /* EnemyGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +331,7 @@
 				A4CD0B751B870DC100FF533D /* GameViewController.swift in Sources */,
 				A1A77921227F7EA10014CDD2 /* Player.swift in Sources */,
 				A4C714681B86970B00D5F10C /* MazeBuilder.swift in Sources */,
+				A13700BE22889ED300E70463 /* EnemyGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +347,7 @@
 				A42DBDC81B7948850032B883 /* GameViewController.swift in Sources */,
 				A1A77920227F7EA10014CDD2 /* Player.swift in Sources */,
 				A40581261B7C08C100E0EC65 /* Maze.swift in Sources */,
+				A13700BD22889ED300E70463 /* EnemyGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
