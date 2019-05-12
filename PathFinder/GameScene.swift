@@ -9,11 +9,20 @@
 import SpriteKit
 import GameplayKit
 
+enum Direction {
+    case up
+    case down
+    case left
+    case right
+}
+
 class GameScene: SKScene {
     // MARK: Properties
     
     /// Holds information about the maze.
     var maze = Maze()
+    
+    var player = Player()
     
     /// Whether the solution is currently displayed or not.
     var hasSolutionDisplayed = false
@@ -48,6 +57,10 @@ class GameScene: SKScene {
         maze = Maze()
         generateMazeNodes()
         hasSolutionDisplayed = false
+    }
+    
+    func createPlayer() {
+        player = Player()
     }
     
     /**
@@ -130,6 +143,10 @@ class GameScene: SKScene {
             let y = Int(tn.gridPosition.y)
             spriteNodes[x][y]?.color = SKColor.yellow
         }
+        
+        let playerX = Int(player.position.x)
+        let playerY = Int(player.position.y)
+        spriteNodes[playerX][playerY]?.color = SKColor.white
     }
     
     /// Animates a solution to the maze.
@@ -170,6 +187,44 @@ class GameScene: SKScene {
             }
         }
     }
+    
+    func removePlayer() {
+        let playerX = Int(player.position.x)
+        let playerY = Int(player.position.y)
+        print("Player at (\(playerX),\(playerY))")
+        spriteNodes[playerX][playerY]?.color = SKColor.darkGray
+    }
+    func writePlayer() {
+        let playerX = Int(player.position.x)
+        let playerY = Int(player.position.y)
+        print("Player at (\(playerX),\(playerY))")
+        spriteNodes[playerX][playerY]?.color = SKColor.white
+    }
+    func attemptPlayerMove(direction: Direction) {
+        let playerX = Int32(player.position.x)
+        let playerY = Int32(player.position.y)
+        var newPlayerPos: int2
+        
+        switch direction {
+        case .up:
+            newPlayerPos = int2(playerX,playerY+1)
+        case .down:
+            newPlayerPos = int2(playerX,playerY-1)
+        case .left:
+            newPlayerPos = int2(playerX-1,playerY)
+        case .right:
+            newPlayerPos = int2(playerX+1,playerY)
+        }
+        
+        // check to see if move is valid then move player
+        if maze.graph.node(atGridPosition: newPlayerPos) != nil {
+            removePlayer()
+            player.moveToPosition(newPosition: newPlayerPos)
+            writePlayer()
+        } else {
+            print("NOT ALLOWED")
+        }
+    }
 }
 
 // MARK: OS X Input Handling
@@ -180,8 +235,21 @@ class GameScene: SKScene {
             Advances the game by creating a new maze or solving the existing maze if
             a key press is detected.
         */
-        override func keyDown(with _: NSEvent) {
-            createOrSolveMaze()
+        override func keyDown(with keyPress: NSEvent) {
+            //createOrSolveMaze()
+            
+            switch keyPress.keyCode {
+            case 123: // left
+                attemptPlayerMove(direction: .left)
+            case 124: // right
+                attemptPlayerMove(direction: .right)
+            case 125: // down
+                attemptPlayerMove(direction: .down)
+            case 126: // up
+                attemptPlayerMove(direction: .up)
+            default:
+                print("Key with number: \(keyPress.keyCode) was pressed")
+            }
         }
         
         /**

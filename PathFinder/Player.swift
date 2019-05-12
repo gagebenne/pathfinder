@@ -19,4 +19,20 @@ class Player {
         power = 5
         position = int2(0,0)
     }
+    
+    func moveUp() {
+        position.y = position.y + 1
+    }
+    func moveDown() {
+        position.y = position.y - 1
+    }
+    func moveLeft() {
+        position.x = position.x - 1
+    }
+    func moveRight() {
+        position.x = position.x + 1
+    }
+    func moveToPosition(newPosition: int2) {
+        position = newPosition
+    }
 }
