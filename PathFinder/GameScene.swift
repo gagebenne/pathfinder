@@ -203,23 +203,26 @@ class GameScene: SKScene {
     func attemptPlayerMove(direction: Direction) {
         let playerX = Int32(player.position.x)
         let playerY = Int32(player.position.y)
-        var newPlayerPos: int2
+        var newPosition: GKGridGraphNode?
         
         switch direction {
-        case .up:
-            newPlayerPos = int2(playerX,playerY+1)
-        case .down:
-            newPlayerPos = int2(playerX,playerY-1)
-        case .left:
-            newPlayerPos = int2(playerX-1,playerY)
-        case .right:
-            newPlayerPos = int2(playerX+1,playerY)
+            case .up:
+                newPosition = maze.graph.node(atGridPosition: int2(playerX, playerY+1))
+            case .down:
+                newPosition = maze.graph.node(atGridPosition: int2(playerX, playerY-1))
+            case .left:
+                newPosition = maze.graph.node(atGridPosition: int2(playerX-1, playerY))
+            case .right:
+                newPosition = maze.graph.node(atGridPosition: int2(playerX+1, playerY))
         }
         
         // check to see if move is valid then move player
-        if maze.graph.node(atGridPosition: newPlayerPos) != nil {
+        if newPosition != nil {
             removePlayer()
-            player.moveToPosition(newPosition: newPlayerPos)
+            player.move(to: newPosition!)
+            if maze.treasureNodes.contains(newPosition!) {
+                player.foundTreasure(at: newPosition!)
+            }
             writePlayer()
         } else {
             print("NOT ALLOWED")

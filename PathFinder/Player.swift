@@ -11,28 +11,30 @@ import GameplayKit
 import SpriteKit
 
 class Player {
-    var power: Int
-    
     var position: int2
     
-    init() {
-        power = 5
+    var score: Int
+    
+    var pathTraversed: [GKGridGraphNode] = []
+    var treasuresFound: [GKGridGraphNode] = []
+    var enemiesEncountered: [GKGridGraphNode] = []
+    
+    
+    init() {        
         position = int2(0,0)
+        score = 0
     }
     
-    func moveUp() {
-        position.y = position.y + 1
+    func move(to: GKGridGraphNode) {
+        position = int2(to.gridPosition.x, to.gridPosition.y)
+        pathTraversed.append(to)
     }
-    func moveDown() {
-        position.y = position.y - 1
+    
+    func foundTreasure(at: GKGridGraphNode) {
+        treasuresFound.append(at)
     }
-    func moveLeft() {
-        position.x = position.x - 1
-    }
-    func moveRight() {
-        position.x = position.x + 1
-    }
-    func moveToPosition(newPosition: int2) {
-        position = newPosition
+    
+    func encounteredEnemy(at: GKGridGraphNode) {
+        enemiesEncountered.append(at)
     }
 }
