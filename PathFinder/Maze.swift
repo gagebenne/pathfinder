@@ -29,6 +29,7 @@ class Maze {
     var endNode: GKGridGraphNode
     
     var treasureNodes: [GKGridGraphNode] = []
+    var enemyNodes: [GKGridGraphNode] = []
     
     /**
         Computes a solution to the maze by using GameplayKit's pathfinding
@@ -81,5 +82,7 @@ class Maze {
             Create a TreasureSpreader to generate a random set of treasures.
         */
         treasureNodes = TreasureSpreader(maze: self).buryTreasure()
+        
+        enemyNodes = EnemyGenerator(maze: self).generateEnemies()
     }
 }

@@ -136,12 +136,18 @@ class GameScene: SKScene {
         
         // Color the start and end nodes green and red, respectively.
         spriteNodes[startNodeX][startNodeY]?.color = SKColor.green
-        spriteNodes[endNodeX][endNodeY]?.color     = SKColor.red
+        spriteNodes[endNodeX][endNodeY]?.color     = SKColor.green
         
         for tn in maze.treasureNodes {
             let x = Int(tn.gridPosition.x)
             let y = Int(tn.gridPosition.y)
             spriteNodes[x][y]?.color = SKColor.yellow
+        }
+        
+        for en in maze.enemyNodes {
+            let x = Int(en.gridPosition.x)
+            let y = Int(en.gridPosition.y)
+            spriteNodes[x][y]?.color = SKColor.red
         }
         
         let playerX = Int(player.position.x)
