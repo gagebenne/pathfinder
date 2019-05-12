@@ -37,4 +37,8 @@ class Player {
     func encounteredEnemy(at: GKGridGraphNode) {
         enemiesEncountered.append(at)
     }
+    
+    func updateScore() {
+        score = pathTraversed.count - 10*treasuresFound.count + 10*enemiesEncountered.count
+    }
 }

@@ -229,6 +229,9 @@ class GameScene: SKScene {
             if maze.treasureNodes.contains(newPosition!) {
                 player.foundTreasure(at: newPosition!)
             }
+            if maze.enemyNodes.contains(newPosition!) {
+                player.encounteredEnemy(at: newPosition!)
+            }
             writePlayer()
         } else {
             print("NOT ALLOWED")
