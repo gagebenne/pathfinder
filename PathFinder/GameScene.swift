@@ -54,13 +54,14 @@ class GameScene: SKScene {
     */
     func createMaze() {
         maze = Maze()
-        player = Player(startPos: int2(maze.startNode.gridPosition.x, maze.startNode.gridPosition.y))
         generateMazeNodes()
+        createPlayer()
         hasSolutionDisplayed = false
     }
     
     func createPlayer() {
-        player = Player()
+        player = Player(startPos: int2(maze.startNode.gridPosition.x, maze.startNode.gridPosition.y))
+        writePlayer()
     }
     
     /**
@@ -148,8 +149,6 @@ class GameScene: SKScene {
             let y = Int(en.gridPosition.y)
             spriteNodes[x][y]?.color = SKColor.red
         }
-        
-        writePlayer()
     }
     
     /// Animates a solution to the maze.
@@ -194,15 +193,17 @@ class GameScene: SKScene {
     func removePlayer() {
         let playerX = Int(player.position.x)
         let playerY = Int(player.position.y)
-        print("Player at (\(playerX),\(playerY))")
+        print("Player was at (\(playerX),\(playerY))")
         spriteNodes[playerX][playerY]?.color = SKColor.darkGray
     }
+    
     func writePlayer() {
         let playerX = Int(player.position.x)
         let playerY = Int(player.position.y)
-        print("Player at (\(playerX),\(playerY))")
+        print("Player now at (\(playerX),\(playerY))")
         spriteNodes[playerX][playerY]?.color = SKColor.white
     }
+    
     func attemptPlayerMove(direction: Direction) {
         let playerX = Int32(player.position.x)
         let playerY = Int32(player.position.y)
@@ -231,7 +232,7 @@ class GameScene: SKScene {
                 player.encounteredEnemy(at: newPos)
                 maze.enemyNodes.removeAll{$0 == newPos}
             }
-            print(String(player.updateScore()))
+            print("Score: \(String(player.updateScore()))")
             writePlayer()
         } else {
             print("NOT ALLOWED")
@@ -259,6 +260,8 @@ class GameScene: SKScene {
                 attemptPlayerMove(direction: .down)
             case 126: // up
                 attemptPlayerMove(direction: .up)
+            case 36:
+                createMaze()
             default:
                 print("Key with number: \(keyPress.keyCode) was pressed")
             }
@@ -269,7 +272,7 @@ class GameScene: SKScene {
             a click is detected.
         */
         override func mouseDown(with _: NSEvent) {
-            createOrSolveMaze()
+//            createOrSolveMaze()
         }
     }
 #endif
