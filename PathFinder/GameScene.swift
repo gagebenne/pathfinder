@@ -232,6 +232,7 @@ class GameScene: SKScene {
             if maze.enemyNodes.contains(newPosition!) {
                 player.encounteredEnemy(at: newPosition!)
             }
+            score.text = String(player.updateScore())
             writePlayer()
         } else {
             print("NOT ALLOWED")

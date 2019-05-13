@@ -38,7 +38,8 @@ class Player {
         enemiesEncountered.append(at)
     }
     
-    func updateScore() {
+    func updateScore() -> Int {
         score = pathTraversed.count - 10*treasuresFound.count + 10*enemiesEncountered.count
+        return score
     }
 }
