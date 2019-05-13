@@ -13,21 +13,19 @@ import SpriteKit
 class Player {
     var position: int2
     
-    var score: Int
+    var score: Int = 0
     
     var pathTraversed: [GKGridGraphNode] = []
     var treasuresFound: [GKGridGraphNode] = []
     var enemiesEncountered: [GKGridGraphNode] = []
     
     
-    init() {        
+    init() {
         position = int2(0,0)
-        score = 0
     }
     
-    init(startPos: int2) {
-        position = startPos
-        score = 0
+    init(position: int2) {
+        self.position = position
     }
     
     func move(to: GKGridGraphNode) {

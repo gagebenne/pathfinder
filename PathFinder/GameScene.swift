@@ -20,11 +20,8 @@ class GameScene: SKScene {
     // MARK: Properties
     
     /// Holds information about the maze.
-    var maze = Maze()
+    var maze: Maze = Maze()
     var player = Player()
-    
-    /// Whether the solution is currently displayed or not.
-    var hasSolutionDisplayed = false
     
     /**
         Contains optional sprite nodes that are used to visualize the maze 
@@ -35,18 +32,10 @@ class GameScene: SKScene {
         sprite node is nil.
     */
     @nonobjc var spriteNodes = [[SKSpriteNode?]]()
+    @nonobjc var score = SKLabelNode()
+    @nonobjc var alert = SKLabelNode()
     
     // MARK: Methods
-    
-    /// Creates a new maze, or solves the newly created maze.
-    func createOrSolveMaze() {
-        if hasSolutionDisplayed {
-            createMaze()
-        }
-        else {
-            solveMaze()
-        }
-    }
     
     /**
         Creates a maze object, and creates a visual representation of that maze
@@ -56,26 +45,18 @@ class GameScene: SKScene {
         maze = Maze()
         generateMazeNodes()
         createPlayer()
-        hasSolutionDisplayed = false
+    }
+    
+    func repeatMaze() {
+        maze.rebuild()
+        generateMazeNodes()
+        createPlayer()
     }
     
     func createPlayer() {
-        player = Player(startPos: int2(maze.startNode.gridPosition.x, maze.startNode.gridPosition.y))
+        print("NEW PLAYER")
+        player = Player(position: int2(maze.startNode.gridPosition.x, maze.startNode.gridPosition.y))
         writePlayer()
-    }
-    
-    /**
-        Uses GameplayKit's pathfinding to find a solution to the maze, then 
-        solves it.
-    */
-    func solveMaze() {
-        guard let solution = maze.solutionPath else {
-            assertionFailure("Solution not retrievable from maze.")
-            return
-        }
-        
-        animateSolution(solution)
-        hasSolutionDisplayed = true
     }
 
     // MARK: SpriteKit Methods
@@ -130,24 +111,26 @@ class GameScene: SKScene {
         }
         
         // Grab the coordinates of the start and end maze sprite nodes.
-//        let startNodeX = Int(maze.startNode.gridPosition.x)
-//        let startNodeY = Int(maze.startNode.gridPosition.y)
+        let startNodeX = Int(maze.startNode.gridPosition.x)
+        let startNodeY = Int(maze.startNode.gridPosition.y)
         let endNodeX   = Int(maze.endNode.gridPosition.x)
         let endNodeY   = Int(maze.endNode.gridPosition.y)
         
         // Color the start and end nodes green and red, respectively.
-        spriteNodes[endNodeX][endNodeY]?.color     = SKColor.green
+        spriteNodes[startNodeX][startNodeY]?.color = SKColor.green
+        spriteNodes[endNodeX][endNodeY]?.color     = SKColor.red
         
-        for tn in maze.treasureNodes {
-            let x = Int(tn.gridPosition.x)
-            let y = Int(tn.gridPosition.y)
+        print("\(maze.treasureNodes.count)")
+        for treasure in maze.treasureNodes {
+            let x = Int(treasure.gridPosition.x)
+            let y = Int(treasure.gridPosition.y)
             spriteNodes[x][y]?.color = SKColor.yellow
         }
         
-        for en in maze.enemyNodes {
-            let x = Int(en.gridPosition.x)
-            let y = Int(en.gridPosition.y)
-            spriteNodes[x][y]?.color = SKColor.red
+        for enemy in maze.enemyNodes {
+            let x = Int(enemy.gridPosition.x)
+            let y = Int(enemy.gridPosition.y)
+            spriteNodes[x][y]?.color = SKColor.orange
         }
     }
     
@@ -207,21 +190,21 @@ class GameScene: SKScene {
     func attemptPlayerMove(direction: Direction) {
         let playerX = Int32(player.position.x)
         let playerY = Int32(player.position.y)
-        var newPosition: GKGridGraphNode?
+        var attemptPos: GKGridGraphNode?
         
         switch direction {
             case .up:
-                newPosition = maze.graph.node(atGridPosition: int2(playerX, playerY+1))
+                attemptPos = maze.graph.node(atGridPosition: int2(playerX, playerY+1))
             case .down:
-                newPosition = maze.graph.node(atGridPosition: int2(playerX, playerY-1))
+                attemptPos = maze.graph.node(atGridPosition: int2(playerX, playerY-1))
             case .left:
-                newPosition = maze.graph.node(atGridPosition: int2(playerX-1, playerY))
+                attemptPos = maze.graph.node(atGridPosition: int2(playerX-1, playerY))
             case .right:
-                newPosition = maze.graph.node(atGridPosition: int2(playerX+1, playerY))
+                attemptPos = maze.graph.node(atGridPosition: int2(playerX+1, playerY))
         }
         
         // check to see if move is valid then move player
-        if let newPos = newPosition {
+        if let newPos = attemptPos {
             removePlayer()
             player.move(to: newPos)
             if maze.treasureNodes.contains(newPos) {
@@ -234,9 +217,20 @@ class GameScene: SKScene {
             }
             print("Score: \(String(player.updateScore()))")
             writePlayer()
+            if maze.endNode == newPos {
+                print("GAME OVER")
+            }
         } else {
             print("NOT ALLOWED")
         }
+    }
+    
+    func alert(with: String) {
+        alert.text = "You Win!"
+        alert.fontSize = 65
+        alert.position = CGPoint(x: frame.midX, y: frame.midY)
+        
+        addChild(alert)
     }
 }
 
@@ -249,8 +243,6 @@ class GameScene: SKScene {
             a key press is detected.
         */
         override func keyDown(with keyPress: NSEvent) {
-            //createOrSolveMaze()
-            
             switch keyPress.keyCode {
             case 123: // left
                 attemptPlayerMove(direction: .left)
@@ -261,7 +253,7 @@ class GameScene: SKScene {
             case 126: // up
                 attemptPlayerMove(direction: .up)
             case 36:
-                createMaze()
+                repeatMaze()
             default:
                 print("Key with number: \(keyPress.keyCode) was pressed")
             }
@@ -272,7 +264,7 @@ class GameScene: SKScene {
             a click is detected.
         */
         override func mouseDown(with _: NSEvent) {
-//            createOrSolveMaze()
+            createMaze()
         }
     }
 #endif

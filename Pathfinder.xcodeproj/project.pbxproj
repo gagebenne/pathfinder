@@ -15,6 +15,9 @@
 		112FE9891C5999650064E15F /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = A4774EAB1B434B2B007C1EB1 /* GameScene.sks */; };
 		112FE98A1C5999650064E15F /* MazeBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C714661B86970B00D5F10C /* MazeBuilder.swift */; };
 		112FE98B1C5999650064E15F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4774EAD1B434B2B007C1EB1 /* Assets.xcassets */; };
+		2B200E4D22890143006D17C3 /* QLearning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B200E4C22890143006D17C3 /* QLearning.swift */; };
+		2B200E4E22890143006D17C3 /* QLearning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B200E4C22890143006D17C3 /* QLearning.swift */; };
+		2B200E4F22890143006D17C3 /* QLearning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B200E4C22890143006D17C3 /* QLearning.swift */; };
 		A13700B922888A1800E70463 /* TreasureSpreader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13700B822888A1800E70463 /* TreasureSpreader.swift */; };
 		A13700BA22888A1800E70463 /* TreasureSpreader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13700B822888A1800E70463 /* TreasureSpreader.swift */; };
 		A13700BB22888A1800E70463 /* TreasureSpreader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13700B822888A1800E70463 /* TreasureSpreader.swift */; };
@@ -47,6 +50,7 @@
 		112FE9701C5999130064E15F /* Pathfinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pathfinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		112FE97D1C5999130064E15F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		112FE9811C5999130064E15F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2B200E4C22890143006D17C3 /* QLearning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QLearning.swift; sourceTree = "<group>"; };
 		A13700B822888A1800E70463 /* TreasureSpreader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreasureSpreader.swift; sourceTree = "<group>"; };
 		A13700BC22889ED200E70463 /* EnemyGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyGenerator.swift; sourceTree = "<group>"; };
 		A1A7791F227F7EA10014CDD2 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
@@ -157,6 +161,7 @@
 				A40581251B7C08C100E0EC65 /* Maze.swift */,
 				A1A7791F227F7EA10014CDD2 /* Player.swift */,
 				A432D8E41B7D58F30039067A /* GameScene.swift */,
+				2B200E4C22890143006D17C3 /* QLearning.swift */,
 				A4774EAB1B434B2B007C1EB1 /* GameScene.sks */,
 				A4C714661B86970B00D5F10C /* MazeBuilder.swift */,
 				A4774EAD1B434B2B007C1EB1 /* Assets.xcassets */,
@@ -310,6 +315,7 @@
 				A1A77922227F7EA10014CDD2 /* Player.swift in Sources */,
 				112FE98A1C5999650064E15F /* MazeBuilder.swift in Sources */,
 				A13700BF22889ED300E70463 /* EnemyGenerator.swift in Sources */,
+				2B200E4F22890143006D17C3 /* QLearning.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +331,7 @@
 				A1A77921227F7EA10014CDD2 /* Player.swift in Sources */,
 				A4C714681B86970B00D5F10C /* MazeBuilder.swift in Sources */,
 				A13700BE22889ED300E70463 /* EnemyGenerator.swift in Sources */,
+				2B200E4E22890143006D17C3 /* QLearning.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +347,7 @@
 				A1A77920227F7EA10014CDD2 /* Player.swift in Sources */,
 				A40581261B7C08C100E0EC65 /* Maze.swift in Sources */,
 				A13700BD22889ED300E70463 /* EnemyGenerator.swift in Sources */,
+				2B200E4D22890143006D17C3 /* QLearning.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,7 +10,7 @@ import GameplayKit
 import SpriteKit
 
 struct MazeConstants {
-    static let Dimensions = 49
+    static let Dimensions = 9
 }
 
 class Maze {
@@ -32,29 +32,17 @@ class Maze {
     /// A node in a grid-based graph representing the ending point of the maze.
     var endNode: GKGridGraphNode
     
+    /// Nodes in a grid-based graph representing the nodes that have treasure.
     var treasureNodes: [GKGridGraphNode] = []
+    
+    /// Nodes in a grid-based graph representing the nodes that have enemies.
     var enemyNodes: [GKGridGraphNode] = []
     
-    /**
-        Computes a solution to the maze by using GameplayKit's pathfinding
-        on the maze's GKGridGraph.
-    */
-    var solutionPath: [GKGridGraphNode]? {
-        // Calculate a solution path to the maze.
-        let solution = graph.findPath(from: startNode, to: endNode) as! [GKGridGraphNode]
-        
-        /*
-            If the solution path is not empty, return the path. Otherwise, 
-            throw an error.
-        */
-        if solution.isEmpty {
-            assertionFailure("No path exists between startNode and endNode.")
-            return nil
-        }
-        else {
-            return solution
-        }
-    }
+    /// Nodes in a grid-based graph representing the nodes that have treasure.
+    private var mazeTreasureNodes: [GKGridGraphNode] = []
+    
+    /// Nodes in a grid-based graph representing the nodes that have enemies.
+    private var mazeEnemyNodes: [GKGridGraphNode] = []
     
     // MARK: Initialization
     
@@ -71,7 +59,6 @@ class Maze {
         */
         startNode = graph.node(atGridPosition: int2(0, Int32(Maze.dimensions - 1)))!
         endNode   = graph.node(atGridPosition: int2(Int32(Maze.dimensions - 1), 0))!
-       
         
         /*
             Create a MazeBuilder to generate a random set of walls, then remove 
@@ -83,10 +70,18 @@ class Maze {
         graph.remove(mazeWalls)
         
         /*
-            Create a TreasureSpreader to generate a random set of treasures.
+            Create a TreasureSpreader and EnemyGenerator to generate a random
+            set of treasures and enemies.
         */
         treasureNodes = TreasureSpreader(maze: self).buryTreasure()
+        mazeTreasureNodes = treasureNodes
         
         enemyNodes = EnemyGenerator(maze: self).generateEnemies()
+        mazeEnemyNodes = enemyNodes
+    }
+    
+    func rebuild() {
+        treasureNodes = mazeTreasureNodes
+        enemyNodes = mazeEnemyNodes
     }
 }
