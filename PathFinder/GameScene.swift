@@ -54,7 +54,7 @@ class GameScene: SKScene {
     */
     func createMaze() {
         maze = Maze()
-        player = Player(startPos: int2(0, Int32(MazeConstants.Dimensions)))
+        player = Player(startPos: int2(maze.startNode.gridPosition.x, maze.startNode.gridPosition.y))
         generateMazeNodes()
         hasSolutionDisplayed = false
     }
@@ -225,11 +225,13 @@ class GameScene: SKScene {
             player.move(to: newPos)
             if maze.treasureNodes.contains(newPos) {
                 player.foundTreasure(at: newPos)
+                maze.treasureNodes.removeAll{$0 == newPos}
             }
             if maze.enemyNodes.contains(newPos) {
                 player.encounteredEnemy(at: newPos)
+                maze.enemyNodes.removeAll{$0 == newPos}
             }
-            score.text = String(player.updateScore())
+            print(String(player.updateScore()))
             writePlayer()
         } else {
             print("NOT ALLOWED")
