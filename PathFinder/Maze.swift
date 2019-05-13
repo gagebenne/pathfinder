@@ -9,6 +9,10 @@
 import GameplayKit
 import SpriteKit
 
+struct MazeConstants {
+    static let Dimensions = 49
+}
+
 class Maze {
     // MARK: Properties
     
@@ -17,7 +21,7 @@ class Maze {
     
         - Note: This value must be odd.
     */
-    static let dimensions = 49
+    static let dimensions = MazeConstants.Dimensions
     
     /// A grid-based graph representing the navigability space of the maze.
     var graph: GKGridGraph<GKGridGraphNode>

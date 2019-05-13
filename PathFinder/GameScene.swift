@@ -21,7 +21,6 @@ class GameScene: SKScene {
     
     /// Holds information about the maze.
     var maze = Maze()
-    
     var player = Player()
     
     /// Whether the solution is currently displayed or not.
@@ -55,6 +54,7 @@ class GameScene: SKScene {
     */
     func createMaze() {
         maze = Maze()
+        player = Player(startPos: int2(0, Int32(MazeConstants.Dimensions)))
         generateMazeNodes()
         hasSolutionDisplayed = false
     }
@@ -129,13 +129,12 @@ class GameScene: SKScene {
         }
         
         // Grab the coordinates of the start and end maze sprite nodes.
-        let startNodeX = Int(maze.startNode.gridPosition.x)
-        let startNodeY = Int(maze.startNode.gridPosition.y)
+//        let startNodeX = Int(maze.startNode.gridPosition.x)
+//        let startNodeY = Int(maze.startNode.gridPosition.y)
         let endNodeX   = Int(maze.endNode.gridPosition.x)
         let endNodeY   = Int(maze.endNode.gridPosition.y)
         
         // Color the start and end nodes green and red, respectively.
-        spriteNodes[startNodeX][startNodeY]?.color = SKColor.green
         spriteNodes[endNodeX][endNodeY]?.color     = SKColor.green
         
         for tn in maze.treasureNodes {
@@ -150,9 +149,7 @@ class GameScene: SKScene {
             spriteNodes[x][y]?.color = SKColor.red
         }
         
-        let playerX = Int(player.position.x)
-        let playerY = Int(player.position.y)
-        spriteNodes[playerX][playerY]?.color = SKColor.white
+        writePlayer()
     }
     
     /// Animates a solution to the maze.
@@ -223,14 +220,14 @@ class GameScene: SKScene {
         }
         
         // check to see if move is valid then move player
-        if newPosition != nil {
+        if let newPos = newPosition {
             removePlayer()
-            player.move(to: newPosition!)
-            if maze.treasureNodes.contains(newPosition!) {
-                player.foundTreasure(at: newPosition!)
+            player.move(to: newPos)
+            if maze.treasureNodes.contains(newPos) {
+                player.foundTreasure(at: newPos)
             }
-            if maze.enemyNodes.contains(newPosition!) {
-                player.encounteredEnemy(at: newPosition!)
+            if maze.enemyNodes.contains(newPos) {
+                player.encounteredEnemy(at: newPos)
             }
             writePlayer()
         } else {

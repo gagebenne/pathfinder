@@ -25,6 +25,11 @@ class Player {
         score = 0
     }
     
+    init(startPos: int2) {
+        position = startPos
+        score = 0
+    }
+    
     func move(to: GKGridGraphNode) {
         position = int2(to.gridPosition.x, to.gridPosition.y)
         pathTraversed.append(to)
