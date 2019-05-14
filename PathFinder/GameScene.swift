@@ -21,7 +21,7 @@ class GameScene: SKScene {
     
     /// Holds information about the maze.
     var maze: Maze = Maze()
-    var player = Player()
+    var player: Player = Player()
     
     /**
         Contains optional sprite nodes that are used to visualize the maze 
@@ -42,12 +42,14 @@ class GameScene: SKScene {
         using sprites.
     */
     func createMaze() {
+        print("NEW MAZE")
         maze = Maze()
         generateMazeNodes()
         createPlayer()
     }
     
     func repeatMaze() {
+        print("REPEAT MAZE")
         maze.rebuild()
         generateMazeNodes()
         createPlayer()
@@ -120,7 +122,6 @@ class GameScene: SKScene {
         spriteNodes[startNodeX][startNodeY]?.color = SKColor.green
         spriteNodes[endNodeX][endNodeY]?.color     = SKColor.red
         
-        print("\(maze.treasureNodes.count)")
         for treasure in maze.treasureNodes {
             let x = Int(treasure.gridPosition.x)
             let y = Int(treasure.gridPosition.y)
@@ -132,6 +133,10 @@ class GameScene: SKScene {
             let y = Int(enemy.gridPosition.y)
             spriteNodes[x][y]?.color = SKColor.orange
         }
+        
+        score.text = "Score: 0"
+        score.position = CGPoint(x: mazeParentNode.size.width/2, y: -cellDimension)
+        mazeParentNode.addChild(score)
     }
     
     /// Animates a solution to the maze.
@@ -189,7 +194,6 @@ class GameScene: SKScene {
     
     func attemptPlayerMove(direction: Direction) {
         if gameOver() {
-            print("GAME OVER")
             return
         }
         let playerX = Int32(player.position.x)
@@ -218,6 +222,12 @@ class GameScene: SKScene {
             if maze.enemyNodes.contains(newPos) {
                 player.encounteredEnemy(at: newPos)
                 maze.enemyNodes.removeAll{$0 == newPos}
+            }
+            if gameOver() {
+                score.text = "GAME OVER: \(String(player.updateScore()))"
+                print("GAME OVER")
+            } else {
+                score.text = "Score: \(String(player.updateScore()))"
             }
             print("Score: \(String(player.updateScore()))")
             writePlayer()
