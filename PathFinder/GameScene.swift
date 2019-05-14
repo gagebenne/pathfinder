@@ -27,7 +27,7 @@ class GameScene: SKScene {
     
     /// Holds information about the maze.
     var maze: Maze = Maze()
-    var player = Player()
+    var player: Player = Player()
     
     /**
         Contains optional sprite nodes that are used to visualize the maze 
@@ -48,6 +48,7 @@ class GameScene: SKScene {
         using sprites.
     */
     func createMaze() {
+        print("NEW MAZE")
         maze = Maze()
         generateMazeNodes()
         createPlayer()
@@ -63,6 +64,7 @@ class GameScene: SKScene {
 //    }
     
     func repeatMaze() {
+        print("REPEAT MAZE")
         maze.rebuild()
         generateMazeNodes()
         createPlayer()
@@ -147,6 +149,10 @@ class GameScene: SKScene {
             let y = Int(enemy.gridPosition.y)
             spriteNodes[x][y]?.color = SKColor.orange
         }
+        
+        score.text = "Score: 0"
+        score.position = CGPoint(x: mazeParentNode.size.width/2, y: -cellDimension)
+        mazeParentNode.addChild(score)
     }
     
     /// Animates a solution to the maze.
