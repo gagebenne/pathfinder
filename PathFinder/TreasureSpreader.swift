@@ -23,15 +23,20 @@ class TreasureSpreader {
     
     // MARK: Methods
     
-    func buryTreasure() -> [GKGridGraphNode] {
-        let graphNodes = maze.graph.nodes as! [GKGridGraphNode]
+    func buryTreasure() -> Dictionary<GKGridGraphNode, Float> {
+        let graphNodes = maze.graph.nodes!.filter { node in
+            // Randomly filter node into the array.
+            return Int.random(in: 1...100) % 10 == 110
+            } as! [GKGridGraphNode]
         
         // Filter in the nodes that could potentially be treasures.
-        let treasureNodes = graphNodes.filter { node in
-            
-            // Randomly filter node into the array.
-            return Int.random(in: 1...100) % 50 == 0
+        var treasureNodes: Dictionary<GKGridGraphNode, Float> = [:]
+        for n in graphNodes {
+            treasureNodes.updateValue(20.0, forKey: n)
         }
+        treasureNodes.removeValue(forKey: maze.startNode)
+        treasureNodes.removeValue(forKey: maze.endNode)
+        
         return treasureNodes
     }
 }

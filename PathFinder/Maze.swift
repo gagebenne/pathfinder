@@ -33,18 +33,18 @@ class Maze {
     var endNode: GKGridGraphNode
     
     /// Nodes in a grid-based graph representing the nodes that have treasure.
-    var treasureNodes: [GKGridGraphNode] = []
+    var treasureNodes: Dictionary<GKGridGraphNode, Float> = [:]
     
     /// Nodes in a grid-based graph representing the nodes that have enemies.
-    var enemyNodes: [GKGridGraphNode] = []
+    var enemyNodes: Dictionary<GKGridGraphNode, Float> = [:]
     
     var nodes: [GKGridGraphNode] = []
     
     /// Nodes in a grid-based graph representing the nodes that have treasure.
-    private var mazeTreasureNodes: [GKGridGraphNode] = []
+    private var mazeTreasureNodes: Dictionary<GKGridGraphNode, Float> = [:]
     
     /// Nodes in a grid-based graph representing the nodes that have enemies.
-    private var mazeEnemyNodes: [GKGridGraphNode] = []
+    private var mazeEnemyNodes: Dictionary<GKGridGraphNode, Float> = [:]
     
     // MARK: Initialization
     

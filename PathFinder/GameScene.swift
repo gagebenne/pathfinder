@@ -17,7 +17,7 @@ enum Direction: Int, CaseIterable {
     
     static func randomDirection() -> Direction {
         // pick and return a new value
-        let rand = Int.random(in: 0...3)
+        let rand = GKRandomSource.sharedRandom().nextInt(upperBound: 3)
         return Direction(rawValue: rand)!
     }
 }
@@ -54,17 +54,8 @@ class GameScene: SKScene {
         createPlayer()
     }
     
-//      DOESNT WORK
-//    func instantReplay() {
-//        for n in player.pathTraversed {
-//            removePlayer()
-//            player.move(to: n)
-//            writePlayer()
-//        }
-//    }
-    
     func repeatMaze() {
-        print("REPEAT MAZE")
+//        print("REPEAT MAZE")
         maze.rebuild()
         generateMazeNodes()
         createPlayer()
@@ -138,13 +129,13 @@ class GameScene: SKScene {
         spriteNodes[endNodeX][endNodeY]?.color     = SKColor.red
         
         //print("\(maze.treasureNodes.count)")
-        for treasure in maze.treasureNodes {
+        for (treasure, _) in maze.treasureNodes {
             let x = Int(treasure.gridPosition.x)
             let y = Int(treasure.gridPosition.y)
             spriteNodes[x][y]?.color = SKColor.yellow
         }
         
-        for enemy in maze.enemyNodes {
+        for (enemy, _) in maze.enemyNodes {
             let x = Int(enemy.gridPosition.x)
             let y = Int(enemy.gridPosition.y)
             spriteNodes[x][y]?.color = SKColor.orange
@@ -163,7 +154,7 @@ class GameScene: SKScene {
             an interval of actionInterval with each iteration of the loop.
         */
         var actionDelay: TimeInterval = 0
-        let actionInterval = 0.005
+        let actionInterval = 1.0
         
         /*
             Light up each sprite in the solution sequence, except for the
@@ -173,6 +164,8 @@ class GameScene: SKScene {
             // Grab the position of the maze graph node.
             let x = Int(solution[i].gridPosition.x)
             let y = Int(solution[i].gridPosition.y)
+            print("ANIMATE AT \(solution[i].gridPosition)")
+
             
             /*
                 Increment the action delay so this sprite is highlighted
@@ -211,46 +204,59 @@ class GameScene: SKScene {
             print("GAME OVER")
             return nil
         }
-        let playerX = Int32(player.position.x)
-        let playerY = Int32(player.position.y)
-        var attemptPos: GKGridGraphNode?
-        
-        switch direction {
-            case .up:
-                attemptPos = maze.graph.node(atGridPosition: int2(playerX, playerY+1))
-            case .down:
-                attemptPos = maze.graph.node(atGridPosition: int2(playerX, playerY-1))
-            case .left:
-                attemptPos = maze.graph.node(atGridPosition: int2(playerX-1, playerY))
-            case .right:
-                attemptPos = maze.graph.node(atGridPosition: int2(playerX+1, playerY))
-        }
+        let playerNode = maze.graph.node(atGridPosition: player.position)!
         
         // check to see if move is valid then move player
-        if let newPos = attemptPos {
-            removePlayer()
-            player.move(to: newPos)
-            if maze.treasureNodes.contains(newPos) {
-                player.foundTreasure(at: newPos)
-                maze.treasureNodes.removeAll{$0 == newPos}
-            }
-            if maze.enemyNodes.contains(newPos) {
-                player.encounteredEnemy(at: newPos)
-                maze.enemyNodes.removeAll{$0 == newPos}
-            }
-            let scoreDelta = player.updateScore()
-            //print("Score: \(String(player.score))")
-            writePlayer()
+        if let newNode = move(fromNode: playerNode, direction: direction) {
+            let pastScore = player.score
             
-            return scoreDelta
+            player.move(to: newNode)
+            if let treasureVal = maze.treasureNodes[newNode] {
+                player.foundTreasure(at: newNode, scoreChange: treasureVal)
+                maze.treasureNodes.removeValue(forKey: newNode)
+                print("\tTREASURE FOUND AT: \(newNode.gridPosition)")
+            }
+            if let enemyVal = maze.enemyNodes[newNode] {
+                player.encounteredEnemy(at: newNode, scoreChange: enemyVal)
+                maze.enemyNodes.removeValue(forKey: newNode)
+            }
+            //print("Score: \(String(player.score))")
+            
+            return player.score - pastScore
         } else {
             //print("NOT ALLOWED")
+            return nil
         }
-        return nil
+    }
+    
+    func move(fromPos: int2, direction: Direction) -> int2? {
+        let node = maze.graph.node(atGridPosition: fromPos)!
+        
+        if let newNode = move(fromNode: node, direction: direction) {
+            return newNode.gridPosition
+        } else {
+            return nil
+        }
+    }
+    
+    func move(fromNode: GKGridGraphNode, direction: Direction) -> GKGridGraphNode? {
+        let x = fromNode.gridPosition.x
+        let y = fromNode.gridPosition.y
+        
+        switch direction {
+        case .up:
+            return maze.graph.node(atGridPosition: int2(x, y+1))
+        case .down:
+            return maze.graph.node(atGridPosition: int2(x, y-1))
+        case .left:
+            return maze.graph.node(atGridPosition: int2(x-1, y))
+        case .right:
+            return maze.graph.node(atGridPosition: int2(x+1, y))
+        }
     }
     
     func gameOver() -> Bool {
-        return maze.graph.node(atGridPosition: player.position) == maze.endNode
+        return player.position == maze.endNode.gridPosition
     }
     
     func getPlayerPositionNode() -> GKGridGraphNode {
@@ -269,13 +275,21 @@ class GameScene: SKScene {
         override func keyDown(with keyPress: NSEvent) {
             switch keyPress.keyCode {
             case 123: // left
+                removePlayer()
                 attemptPlayerMove(direction: .left)
+                writePlayer()
             case 124: // right
+                removePlayer()
                 attemptPlayerMove(direction: .right)
+                writePlayer()
             case 125: // down
+                removePlayer()
                 attemptPlayerMove(direction: .down)
+                writePlayer()
             case 126: // up
+                removePlayer()
                 attemptPlayerMove(direction: .up)
+                writePlayer()
             case 36:
                 repeatMaze()
             default:
