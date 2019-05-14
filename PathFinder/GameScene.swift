@@ -9,11 +9,17 @@
 import SpriteKit
 import GameplayKit
 
-enum Direction {
-    case up
-    case down
-    case left
-    case right
+enum Direction: Int, CaseIterable {
+    case up = 2
+    case down = 1
+    case left = 0
+    case right = 3
+    
+    static func randomDirection() -> Direction {
+        // pick and return a new value
+        let rand = Int.random(in: 0...3)
+        return Direction(rawValue: rand)!
+    }
 }
 
 class GameScene: SKScene {
@@ -47,6 +53,15 @@ class GameScene: SKScene {
         createPlayer()
     }
     
+//      DOESNT WORK
+//    func instantReplay() {
+//        for n in player.pathTraversed {
+//            removePlayer()
+//            player.move(to: n)
+//            writePlayer()
+//        }
+//    }
+    
     func repeatMaze() {
         maze.rebuild()
         generateMazeNodes()
@@ -54,7 +69,7 @@ class GameScene: SKScene {
     }
     
     func createPlayer() {
-        print("NEW PLAYER")
+        //print("NEW PLAYER")
         player = Player(position: int2(maze.startNode.gridPosition.x, maze.startNode.gridPosition.y))
         writePlayer()
     }
@@ -120,7 +135,7 @@ class GameScene: SKScene {
         spriteNodes[startNodeX][startNodeY]?.color = SKColor.green
         spriteNodes[endNodeX][endNodeY]?.color     = SKColor.red
         
-        print("\(maze.treasureNodes.count)")
+        //print("\(maze.treasureNodes.count)")
         for treasure in maze.treasureNodes {
             let x = Int(treasure.gridPosition.x)
             let y = Int(treasure.gridPosition.y)
@@ -176,21 +191,19 @@ class GameScene: SKScene {
     func removePlayer() {
         let playerX = Int(player.position.x)
         let playerY = Int(player.position.y)
-        print("Player was at (\(playerX),\(playerY))")
         spriteNodes[playerX][playerY]?.color = SKColor.darkGray
     }
     
     func writePlayer() {
         let playerX = Int(player.position.x)
         let playerY = Int(player.position.y)
-        print("Player now at (\(playerX),\(playerY))")
         spriteNodes[playerX][playerY]?.color = SKColor.white
     }
     
-    func attemptPlayerMove(direction: Direction) {
+    func attemptPlayerMove(direction: Direction) -> Float? {
         if gameOver() {
             print("GAME OVER")
-            return
+            return nil
         }
         let playerX = Int32(player.position.x)
         let playerY = Int32(player.position.y)
@@ -219,15 +232,23 @@ class GameScene: SKScene {
                 player.encounteredEnemy(at: newPos)
                 maze.enemyNodes.removeAll{$0 == newPos}
             }
-            print("Score: \(String(player.updateScore()))")
+            let scoreDelta = player.updateScore()
+            //print("Score: \(String(player.score))")
             writePlayer()
+            
+            return scoreDelta
         } else {
-            print("NOT ALLOWED")
+            //print("NOT ALLOWED")
         }
+        return nil
     }
     
     func gameOver() -> Bool {
         return maze.graph.node(atGridPosition: player.position) == maze.endNode
+    }
+    
+    func getPlayerPositionNode() -> GKGridGraphNode {
+        return maze.graph.node(atGridPosition: player.position)!
     }
 }
 

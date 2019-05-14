@@ -38,6 +38,8 @@ class Maze {
     /// Nodes in a grid-based graph representing the nodes that have enemies.
     var enemyNodes: [GKGridGraphNode] = []
     
+    var nodes: [GKGridGraphNode] = []
+    
     /// Nodes in a grid-based graph representing the nodes that have treasure.
     private var mazeTreasureNodes: [GKGridGraphNode] = []
     
@@ -68,6 +70,14 @@ class Maze {
         let mazeBuilder = MazeBuilder(maze: self)
         let mazeWalls = mazeBuilder.mazeWallsForRemoval()
         graph.remove(mazeWalls)
+        
+        for i in 0..<MazeConstants.Dimensions {
+            for j in 0..<MazeConstants.Dimensions {
+                if let n = graph.node(atGridPosition: int2(Int32(i),Int32(j))) {
+                    nodes.append(n)
+                }
+            }
+        }
         
         /*
             Create a TreasureSpreader and EnemyGenerator to generate a random

@@ -13,7 +13,7 @@ import SpriteKit
 class Player {
     var position: int2
     
-    var score: Int = 0
+    var score: Float = 0.0
     
     var pathTraversed: [GKGridGraphNode] = []
     var treasuresFound: [GKGridGraphNode] = []
@@ -41,8 +41,9 @@ class Player {
         enemiesEncountered.append(at)
     }
     
-    func updateScore() -> Int {
-        score = pathTraversed.count - 10*treasuresFound.count + 10*enemiesEncountered.count
-        return score
+    func updateScore() -> Float {
+        let oldScore = score
+        score = Float(pathTraversed.count) - 10.0*Float(treasuresFound.count) + 10.0*Float(enemiesEncountered.count)
+        return score - oldScore
     }
 }
