@@ -9,33 +9,26 @@
 import Foundation
 import GameplayKit
 
-//class QLearning {
-//    
-//    var alpha: Float = 0.5
-//    var gamma: Float = 0.5
-//    var epsilon: Float = 0.5
-//    
-//    let maze: Maze
-//    let game: GameScene
-//    
-//    struct stateAction: Hashable {
-//        var node: GKGraphNode
-//        var direction: Direction
-//    }
-//
-//    var qTable: [stateAction: Int] = [:]
-//
-//    init(game: GameScene) {
-//        self.game = game
-//    }
-//    
-//    func learn(episodes: Int) {
-////        for _ in 0...episodes {
-////            while !gameover {
-////                if Float.random(in: 0...1) < epsilon {
-////
-////                }
-////            }
-////        }
-//    }
-//}
+class QLearning {
+    
+    var alpha: Float = 0.5
+    var gamma: Float = 0.5
+    var epsilon: Float = 0.5
+    
+    var game: GameScene
+    
+    struct stateAction: Hashable {
+        var node: GKGraphNode
+        var direction: Direction
+    }
+
+    var qTable: [stateAction: Int] = [:]
+
+    init(game: GameScene) {
+        self.game = game
+    }
+    
+    func learn(episodes: Int) {
+        
+    }
+}

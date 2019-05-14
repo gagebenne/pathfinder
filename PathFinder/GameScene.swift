@@ -188,6 +188,10 @@ class GameScene: SKScene {
     }
     
     func attemptPlayerMove(direction: Direction) {
+        if gameOver() {
+            print("GAME OVER")
+            return
+        }
         let playerX = Int32(player.position.x)
         let playerY = Int32(player.position.y)
         var attemptPos: GKGridGraphNode?
@@ -217,20 +221,13 @@ class GameScene: SKScene {
             }
             print("Score: \(String(player.updateScore()))")
             writePlayer()
-            if maze.endNode == newPos {
-                print("GAME OVER")
-            }
         } else {
             print("NOT ALLOWED")
         }
     }
     
-    func alert(with: String) {
-        alert.text = "You Win!"
-        alert.fontSize = 65
-        alert.position = CGPoint(x: frame.midX, y: frame.midY)
-        
-        addChild(alert)
+    func gameOver() -> Bool {
+        return maze.graph.node(atGridPosition: player.position) == maze.endNode
     }
 }
 
