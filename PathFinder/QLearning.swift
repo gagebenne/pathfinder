@@ -9,18 +9,11 @@
 import Foundation
 import GameplayKit
 
-extension Array {
-    var powerSet: [[Element]] {
-        guard !isEmpty else { return [[]] }
-        return Array(self[1...]).powerSet.flatMap { [$0, [self[0]] + $0] }
-    }
-}
-
 class QLearning {
     
-    var alpha: Float = 0.1
+    var alpha: Float = 0.4
     var gamma: Float = 0.9
-    var epsilon: Float = 0.5
+    var epsilon: Float = 0.3
     
     var node: GKGridGraphNode
     var nextNode: GKGridGraphNode
@@ -49,29 +42,25 @@ class QLearning {
         node = game.getPlayerPositionNode()
         nextNode = node
         
-        let mazeTreasuresPowerSet = Array(game.maze.treasureNodes.keys).powerSet
-        let mazeEnemiesPowerSet = Array(game.maze.enemyNodes.keys).powerSet
-        var state: State
+//        let mazeTreasuresPowerSet = Array(game.maze.treasureNodes.keys).powerSet
+//        let mazeEnemiesPowerSet = Array(game.maze.enemyNodes.keys).powerSet
+//        var state: State
         
-        var i = 0
-        var count = game.maze.nodes.count
-        
-        for n in game.maze.nodes {
-            print("\(i) out of \(count)")
-            for t in mazeTreasuresPowerSet {
-                for e in mazeEnemiesPowerSet {
-                    state = State(node: n, treasures: Set(t), enemies: Set(e))
+//        for n in game.maze.nodes {
+//            print("\(i) out of \(count)")
+//            for t in mazeTreasuresPowerSet {
+//                for e in mazeEnemiesPowerSet {
+//                    state = State(node: n, treasures: Set(t), enemies: Set(e))
 //                    print("node: \(state.node), treasures: \(state.treasures), enemies: \(state.enemies)")
-                    qTable.updateValue(Dictionary.init(), forKey: state)
-                    for d in Direction.allCases {
-                        if game.move(fromNode: state.node, direction: d) != nil {
-                            qTable[state]!.updateValue(0.0, forKey: d)
-                        }
-                    }
-                }
-            }
-            i += 1
-        }
+//                    qTable.updateValue(Dictionary.init(), forKey: state)
+//                    for d in Direction.allCases {
+//                        if game.move(fromNode: state.node, direction: d) != nil {
+//                            qTable[state]!.updateValue(0.0, forKey: d)
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
     
     func learn(episodes: Int, view: SKView) {
@@ -82,6 +71,15 @@ class QLearning {
             var state = State(node: node, treasures: [], enemies: [])
             
             while !game.gameOver() {
+                if qTable[state] == nil {
+                    qTable.updateValue(Dictionary.init(), forKey: state)
+                        for d in Direction.allCases {
+                            if game.move(fromNode: state.node, direction: d) != nil {
+                                qTable[state]!.updateValue(0.0, forKey: d)
+                            }
+                        }
+                }
+                
                 if GKRandomSource.sharedRandom().nextUniform() < epsilon {
                     action = qTable[state]!.keys.randomElement()!
                 } else {
@@ -98,9 +96,17 @@ class QLearning {
                 nextNode = game.getPlayerPositionNode()
                 let nextState = State(node: nextNode, treasures: game.player.treasuresFound, enemies: game.player.enemiesEncountered)
 //                print("[STATE] node: \(nextState.node), treasures: \(nextState.treasures), enemies: \(nextState.enemies)")
+                if qTable[nextState] == nil {
+                    qTable.updateValue(Dictionary.init(), forKey: nextState)
+                    for d in Direction.allCases {
+                        if game.move(fromNode: nextState.node, direction: d) != nil {
+                            qTable[nextState]!.updateValue(0.0, forKey: d)
+                        }
+                    }
+                }
                 nextMaxValue = qTable[nextState]!.max { a, b in a.value < b.value }!.value
-//                newValue =  oldValue + alpha * (reward + gamma * nextMaxValue - oldValue)
-                newValue = (1 - alpha) * oldValue + alpha * (reward + gamma * nextMaxValue)
+                newValue =  oldValue + alpha * (reward + gamma * nextMaxValue - oldValue)
+//                newValue = (1 - alpha) * oldValue + alpha * (reward + gamma * nextMaxValue)
                 qTable[state]![action]! = newValue
                 
                 state = nextState

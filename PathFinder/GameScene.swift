@@ -247,7 +247,7 @@ class GameScene: SKScene {
 //                print("\t+ -------- + ")
 //                print("\t| WON GAME | ")
 //                print("\t+ -------- + ")
-                player.score += 1000000
+                player.score += 1000
             }
             //print("Score: \(String(player.score))")
             
