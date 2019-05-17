@@ -26,7 +26,7 @@ class TreasureSpreader {
     func buryTreasure() -> Dictionary<GKGridGraphNode, Float> {
         let graphNodes = maze.graph.nodes!.filter { node in
             // Randomly filter node into the array.
-            return Int.random(in: 1...100) % 10 == 110
+            return Int.random(in: 1...100) % 10 == 0
             } as! [GKGridGraphNode]
         
         // Filter in the nodes that could potentially be treasures.

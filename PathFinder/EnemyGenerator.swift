@@ -26,13 +26,13 @@ class EnemyGenerator {
     func generateEnemies() -> Dictionary<GKGridGraphNode, Float> {
         let graphNodes = maze.graph.nodes!.filter { node in
             // Randomly filter node into the array.
-            return Int.random(in: 1...100) % 20 == 110
+            return Int.random(in: 1...100) % 20 == 0
             } as! [GKGridGraphNode]
         
         // Filter in the nodes that could potentially be enemies.
         var enemyNodes: Dictionary<GKGridGraphNode, Float> = [:]
         for n in graphNodes {
-            enemyNodes.updateValue(-100.0, forKey: n)
+            enemyNodes.updateValue(-10.0, forKey: n)
         }
 
         return enemyNodes

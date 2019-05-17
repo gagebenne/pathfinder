@@ -16,8 +16,8 @@ class Player {
     var score: Float = 100.0
     
     var pathTraversed: [GKGridGraphNode] = []
-    var treasuresFound: [GKGridGraphNode] = []
-    var enemiesEncountered: [GKGridGraphNode] = []
+    var treasuresFound: Set<GKGridGraphNode> = []
+    var enemiesEncountered: Set<GKGridGraphNode> = []
     
     
     init() {
@@ -35,12 +35,12 @@ class Player {
     }
     
     func foundTreasure(at: GKGridGraphNode, scoreChange: Float) {
-        treasuresFound.append(at)
+        treasuresFound.insert(at)
         score = score + scoreChange
     }
     
     func encounteredEnemy(at: GKGridGraphNode, scoreChange: Float) {
-        enemiesEncountered.append(at)
+        enemiesEncountered.insert(at)
         score = score + scoreChange
     }
 }

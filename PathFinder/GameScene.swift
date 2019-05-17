@@ -219,6 +219,10 @@ class GameScene: SKScene {
             if let enemyVal = maze.enemyNodes[newNode] {
                 player.encounteredEnemy(at: newNode, scoreChange: enemyVal)
                 maze.enemyNodes.removeValue(forKey: newNode)
+                print("\tENEMY FOUND AT: \(newNode.gridPosition)")
+            }
+            if gameOver() {
+                player.score += 500
             }
             //print("Score: \(String(player.score))")
             
