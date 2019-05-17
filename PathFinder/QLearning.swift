@@ -28,57 +28,78 @@ class QLearning {
     
     var game: GameScene
     
-    struct stateAction: Hashable {
-        var node: GKGraphNode
-        var direction: Direction
+    struct State: Hashable {
+        var node: GKGridGraphNode?
+        var visited: Bool = false
     }
 
-    var qTable: Dictionary<GKGridGraphNode, Dictionary<Direction, Float>> = [:]
+    var qTable: Dictionary<State, Dictionary<Direction, Float>> = [:]
+
 
     init(game: GameScene) {
         self.game = game
         node = game.getPlayerPositionNode()
         nextNode = node
         
+        var state: State = State()
+
         for n in game.maze.nodes {
-            qTable.updateValue(Dictionary.init(), forKey: n)
+            state.node = n
+            
+            state.visited = true
+            qTable.updateValue(Dictionary.init(), forKey: state)
             for d in Direction.allCases {
                 if game.move(fromNode: n, direction: d) != nil {
-                    qTable[n]!.updateValue(Float.random(in: 0.0...1.0), forKey: d)
+                    qTable[state]!.updateValue(Float.random(in: 0.0...1.0), forKey: d)
+                }
+            }
+            
+            state.visited = false
+            qTable.updateValue(Dictionary.init(), forKey: state)
+            for d in Direction.allCases {
+                if game.move(fromNode: n, direction: d) != nil {
+                    qTable[state]!.updateValue(Float.random(in: 0.0...1.0), forKey: d)
                 }
             }
         }
     }
     
     func learn(episodes: Int, view: SKView) {
+        var state: State = State()
+        var nextState: State = State()
+
+        
         for e in 1...episodes {
             print("Episode: \(e)")
             game.repeatMaze()
             node = game.getPlayerPositionNode()
+            state.node = node
+            state.visited = true
             
             while !game.gameOver() {
                 if GKRandomSource.sharedRandom().nextUniform() < epsilon {
-                    action = qTable[node]!.keys.randomElement()!
+                    action = qTable[state]!.keys.randomElement()!
                 } else {
-                    action = qTable[node]!.max { a, b in a.value < b.value }!.key
+                    action = qTable[state]!.max { a, b in a.value < b.value }!.key
                 }
                 
-                if let r = game.attemptPlayerMove(direction: action) {
-                    reward = r
-                } else {
-                    continue
-                }
+                reward = game.attemptPlayerMove(direction: action)!
                 
-                oldValue = qTable[node]![action]!
                 nextNode = game.move(fromNode: node, direction: action)!
-                nextMaxValue = qTable[nextNode]!.max { a, b in a.value < b.value }!.value
+                nextState.node = nextNode
+                nextState.visited = true
+                
+                oldValue = qTable[state]![action]!
+                nextMaxValue = qTable[nextState]!.max { a, b in a.value < b.value }!.value
                 newValue = (1 - alpha) * oldValue + alpha * (reward + gamma * nextMaxValue)
-                qTable[node]![action]! = newValue
+                qTable[state]![action]! = newValue
+
                 
                 node = nextNode
+                state.node = node
             }
             // EVENTUALLY REMOVE??
-            qTable[node]!.updateValue(100.0, forKey: .up)
+            qTable[state]!.updateValue(100.0, forKey: .up)
         }
         
         prettyPrintQTable()
@@ -86,8 +107,8 @@ class QLearning {
     }
     
     func prettyPrintQTable() {
-        for (node, v) in qTable {
-            print("\(node.gridPosition)")
+        for (state, v) in qTable {
+            print("\(state.node!.gridPosition)")
             for (dir, val) in v {
                 print("\t\(dir): \(val)")
             }
@@ -100,12 +121,27 @@ class QLearning {
         let startNode = game.maze.startNode
         let endNode = game.maze.endNode
         var currentNode = startNode
+        var currentState: State = State()
+        var dir: Direction = .up
+        var trail: [Direction] = []
+//        let qCopy = qTable
         
         var i = 0
-        while currentNode != endNode && i < 100 {
+        while currentNode != endNode && i < 1000 {
+            currentState.node = currentNode
+            currentState.visited = true
+            
             path.append(currentNode)
-            let dir = qTable[currentNode]!.max { a, b in a.value < b.value }!.key
-            currentNode = game.move(fromNode: currentNode, direction: dir)!
+            if let dirVal = (qTable[currentState]!.max { a, b in a.value < b.value }) {
+                dir = dirVal.key
+                qTable[currentState]!.removeValue(forKey: dir)
+                currentNode = game.move(fromNode: currentNode, direction: dir)!
+                trail.append(Direction.opposite(dir: dir))
+            } else {
+                dir = trail.popLast()!
+                currentNode = game.move(fromNode: currentNode, direction: dir)!
+            }
+            
             i += 1
         }
         path.append(endNode)

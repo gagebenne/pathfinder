@@ -20,6 +20,19 @@ enum Direction: Int, CaseIterable {
         let rand = GKRandomSource.sharedRandom().nextInt(upperBound: 3)
         return Direction(rawValue: rand)!
     }
+    
+    static func opposite(dir: Direction) -> Direction {
+        switch dir {
+        case .up:
+            return .down
+        case .down:
+            return .up
+        case .left:
+            return .right
+        case .right:
+            return .left
+        }
+    }
 }
 
 class GameScene: SKScene {
@@ -154,7 +167,7 @@ class GameScene: SKScene {
             an interval of actionInterval with each iteration of the loop.
         */
         var actionDelay: TimeInterval = 0
-        let actionInterval = 1.0
+        let actionInterval = 0.25
         
         /*
             Light up each sprite in the solution sequence, except for the
@@ -164,8 +177,6 @@ class GameScene: SKScene {
             // Grab the position of the maze graph node.
             let x = Int(solution[i].gridPosition.x)
             let y = Int(solution[i].gridPosition.y)
-            print("ANIMATE AT \(solution[i].gridPosition)")
-
             
             /*
                 Increment the action delay so this sprite is highlighted
@@ -214,13 +225,12 @@ class GameScene: SKScene {
             if let treasureVal = maze.treasureNodes[newNode] {
                 player.foundTreasure(at: newNode, scoreChange: treasureVal)
                 maze.treasureNodes.removeValue(forKey: newNode)
-                print("\tTREASURE FOUND AT: \(newNode.gridPosition)")
+//                print("\tTREASURE FOUND AT: \(newNode.gridPosition)")
             }
             if let enemyVal = maze.enemyNodes[newNode] {
                 player.encounteredEnemy(at: newNode, scoreChange: enemyVal)
                 maze.enemyNodes.removeValue(forKey: newNode)
             }
-            //print("Score: \(String(player.score))")
             
             return player.score - pastScore
         } else {
