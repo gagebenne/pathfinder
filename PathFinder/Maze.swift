@@ -90,6 +90,9 @@ class Maze {
         mazeEnemyNodes = enemyNodes
     }
     
+    // MARK: Methods
+    
+    /// Rebuilds a maze by restoring treasures and enemies.
     func rebuild() {
         treasureNodes = mazeTreasureNodes
         enemyNodes = mazeEnemyNodes

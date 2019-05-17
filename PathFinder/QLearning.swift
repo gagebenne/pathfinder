@@ -11,7 +11,7 @@ import GameplayKit
 
 class QLearning {
     
-    var alpha: Float = 0.4
+    var alpha: Float = 0.3
     var gamma: Float = 0.9
     var epsilon: Float = 0.3
     

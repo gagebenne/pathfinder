@@ -9,6 +9,14 @@
 import Foundation
 import GameplayKit
 
+struct EnemyGeneratorConstants {
+    /// The cost of encountering an enemy.
+    static let reward = Float(-5.0)
+    
+    /// Probability (out of 100%) of spawning an enemy at a given node.
+    static let probability = 10
+}
+
 class EnemyGenerator {
     // MARK: Properties
     
@@ -26,13 +34,13 @@ class EnemyGenerator {
     func generateEnemies() -> Dictionary<GKGridGraphNode, Float> {
         let graphNodes = maze.graph.nodes!.filter { node in
             // Randomly filter node into the array.
-            return Int.random(in: 1...100) % 20 == 0
+            return Int.random(in: 0...99) < EnemyGeneratorConstants.probability
             } as! [GKGridGraphNode]
         
         // Filter in the nodes that could potentially be enemies.
         var enemyNodes: Dictionary<GKGridGraphNode, Float> = [:]
         for n in graphNodes {
-            enemyNodes.updateValue(-5.0, forKey: n)
+            enemyNodes.updateValue(EnemyGeneratorConstants.reward, forKey: n)
         }
 
         return enemyNodes
