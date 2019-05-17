@@ -32,7 +32,7 @@ class EnemyGenerator {
         // Filter in the nodes that could potentially be enemies.
         var enemyNodes: Dictionary<GKGridGraphNode, Float> = [:]
         for n in graphNodes {
-            enemyNodes.updateValue(-10.0, forKey: n)
+            enemyNodes.updateValue(-5.0, forKey: n)
         }
 
         return enemyNodes

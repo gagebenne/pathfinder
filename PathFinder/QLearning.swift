@@ -18,9 +18,9 @@ extension Array {
 
 class QLearning {
     
-    var alpha: Float = 0.15
-    var gamma: Float = 0.75
-    var epsilon: Float = 0.8
+    var alpha: Float = 0.1
+    var gamma: Float = 0.9
+    var epsilon: Float = 0.5
     
     var node: GKGridGraphNode
     var nextNode: GKGridGraphNode
@@ -53,7 +53,11 @@ class QLearning {
         let mazeEnemiesPowerSet = Array(game.maze.enemyNodes.keys).powerSet
         var state: State
         
+        var i = 0
+        var count = game.maze.nodes.count
+        
         for n in game.maze.nodes {
+            print("\(i) out of \(count)")
             for t in mazeTreasuresPowerSet {
                 for e in mazeEnemiesPowerSet {
                     state = State(node: n, treasures: Set(t), enemies: Set(e))
@@ -66,6 +70,7 @@ class QLearning {
                     }
                 }
             }
+            i += 1
         }
     }
     
@@ -90,12 +95,12 @@ class QLearning {
                 }
                 
                 oldValue = qTable[state]![action]!
-                nextNode = game.move(fromNode: state.node, direction: action)!
+                nextNode = game.getPlayerPositionNode()
                 let nextState = State(node: nextNode, treasures: game.player.treasuresFound, enemies: game.player.enemiesEncountered)
 //                print("[STATE] node: \(nextState.node), treasures: \(nextState.treasures), enemies: \(nextState.enemies)")
                 nextMaxValue = qTable[nextState]!.max { a, b in a.value < b.value }!.value
-                newValue =  oldValue + alpha * (reward + gamma * nextMaxValue - oldValue)
-//                newValue = (1 - alpha) * oldValue + alpha * (reward + gamma * nextMaxValue)
+//                newValue =  oldValue + alpha * (reward + gamma * nextMaxValue - oldValue)
+                newValue = (1 - alpha) * oldValue + alpha * (reward + gamma * nextMaxValue)
                 qTable[state]![action]! = newValue
                 
                 state = nextState
@@ -103,7 +108,7 @@ class QLearning {
             
         }
         
-        prettyPrintQTable()
+//        prettyPrintQTable()
         animateLearnedPath()
     }
     
@@ -128,16 +133,16 @@ class QLearning {
         
         var i = 0
         print("============================== EXECUTING ==============================")
-        while state.node != endNode && i < 100 {
+        while state.node != endNode && i < 1000 {
             path.append(state.node)
-            print("\(state.node.gridPosition)")
-            print("treasures: \(state.treasures), enemies: \(state.enemies)")
-            for (dir, val) in qTable[state]! {
-                print("\t\(dir): \(val)")
-            }
-            print("\n")
+//            print("\(state.node.gridPosition)")
+//            print("treasures: \(state.treasures), enemies: \(state.enemies)")
+//            for (dir, val) in qTable[state]! {
+//                print("\t\(dir): \(val)")
+//            }
+//            print("\n")
             let dir = qTable[state]!.max { a, b in a.value < b.value }!.key
-            print(dir)
+//            print("DIRECTION: \(dir)")
             game.attemptPlayerMove(direction: dir)!
             state.node = game.getPlayerPositionNode()
             state.treasures = game.player.treasuresFound

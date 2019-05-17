@@ -148,19 +148,20 @@ class GameScene: SKScene {
     
     /// Animates a solution to the maze.
     func animateSolution(_ solution: [GKGridGraphNode]) {
+        repeatMaze()
         /*
             The animation works by animating sprites with different start delays.
             actionDelay represents this delay, which increases by
             an interval of actionInterval with each iteration of the loop.
         */
         var actionDelay: TimeInterval = 0
-        let actionInterval = 1.0
+        let actionInterval = 0.1
         
         /*
             Light up each sprite in the solution sequence, except for the
             start and end nodes.
         */
-        for i in 1...(solution.count - 2) {
+        for i in 0...(solution.count - 2) {
             // Grab the position of the maze graph node.
             let x = Int(solution[i].gridPosition.x)
             let y = Int(solution[i].gridPosition.y)
@@ -175,14 +176,35 @@ class GameScene: SKScene {
             
             // Run the animation action on the maze sprite node.
             if let mazeNode = spriteNodes[x][y] {
-                mazeNode.run(
-                    SKAction.sequence(
-                        [SKAction.colorize(with: SKColor.gray, colorBlendFactor: 1, duration: 0.2),
-                            SKAction.wait(forDuration: actionDelay),
-                            SKAction.colorize(with: SKColor.white, colorBlendFactor: 1, duration: 0),
-                            SKAction.colorize(with: SKColor.lightGray, colorBlendFactor: 1, duration: 0.3)]
+                let nodeXY = maze.graph.node(atGridPosition: int2(Int32(x), Int32(y)))
+                if maze.treasureNodes[nodeXY!] != nil {
+                    mazeNode.run(
+                        SKAction.sequence(
+                            [SKAction.colorize(with: SKColor.yellow, colorBlendFactor: 1, duration: 0.2),
+                             SKAction.wait(forDuration: actionDelay),
+                             SKAction.colorize(with: SKColor.yellow, colorBlendFactor: 1, duration: 0),
+                             SKAction.colorize(with: SKColor.yellow, colorBlendFactor: 1, duration: 0.3)]
+                        )
                     )
-                )
+                } else if maze.enemyNodes[nodeXY!] != nil {
+                    mazeNode.run(
+                        SKAction.sequence(
+                            [SKAction.colorize(with: SKColor.orange, colorBlendFactor: 1, duration: 0.2),
+                             SKAction.wait(forDuration: actionDelay),
+                             SKAction.colorize(with: SKColor.orange, colorBlendFactor: 1, duration: 0),
+                             SKAction.colorize(with: SKColor.orange, colorBlendFactor: 1, duration: 0.3)]
+                        )
+                    )
+                } else {
+                    mazeNode.run(
+                        SKAction.sequence(
+                            [SKAction.colorize(with: SKColor.gray, colorBlendFactor: 1, duration: 0.2),
+                             SKAction.wait(forDuration: actionDelay),
+                             SKAction.colorize(with: SKColor.white, colorBlendFactor: 1, duration: 0),
+                             SKAction.colorize(with: SKColor.lightGray, colorBlendFactor: 1, duration: 0.3)]
+                        )
+                    )
+                }
             }
         }
     }
@@ -201,7 +223,7 @@ class GameScene: SKScene {
     
     func attemptPlayerMove(direction: Direction) -> Float? {
         if gameOver() {
-            print("GAME OVER")
+//            print("GAME OVER")
             return nil
         }
         let playerNode = maze.graph.node(atGridPosition: player.position)!
@@ -214,15 +236,18 @@ class GameScene: SKScene {
             if let treasureVal = maze.treasureNodes[newNode] {
                 player.foundTreasure(at: newNode, scoreChange: treasureVal)
                 maze.treasureNodes.removeValue(forKey: newNode)
-                print("\tTREASURE FOUND AT: \(newNode.gridPosition)")
+//                print("\tTREASURE FOUND AT: \(newNode.gridPosition)")
             }
             if let enemyVal = maze.enemyNodes[newNode] {
                 player.encounteredEnemy(at: newNode, scoreChange: enemyVal)
                 maze.enemyNodes.removeValue(forKey: newNode)
-                print("\tENEMY FOUND AT: \(newNode.gridPosition)")
+//                print("\tENEMY FOUND AT: \(newNode.gridPosition)")
             }
             if gameOver() {
-                player.score += 500
+//                print("\t+ -------- + ")
+//                print("\t| WON GAME | ")
+//                print("\t+ -------- + ")
+                player.score += 1000000
             }
             //print("Score: \(String(player.score))")
             
