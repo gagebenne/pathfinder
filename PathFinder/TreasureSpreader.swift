@@ -32,7 +32,7 @@ class TreasureSpreader {
         // Filter in the nodes that could potentially be treasures.
         var treasureNodes: Dictionary<GKGridGraphNode, Float> = [:]
         for n in graphNodes {
-            treasureNodes.updateValue(20.0, forKey: n)
+            treasureNodes.updateValue(200.0, forKey: n)
         }
         treasureNodes.removeValue(forKey: maze.startNode)
         treasureNodes.removeValue(forKey: maze.endNode)

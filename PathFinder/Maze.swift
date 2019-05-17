@@ -10,7 +10,7 @@ import GameplayKit
 import SpriteKit
 
 struct MazeConstants {
-    static let Dimensions = 15
+    static let Dimensions = 21
 }
 
 class Maze {

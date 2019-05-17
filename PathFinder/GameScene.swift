@@ -167,7 +167,7 @@ class GameScene: SKScene {
             an interval of actionInterval with each iteration of the loop.
         */
         var actionDelay: TimeInterval = 0
-        let actionInterval = 0.25
+        let actionInterval = 0.1
         
         /*
             Light up each sprite in the solution sequence, except for the
@@ -188,8 +188,7 @@ class GameScene: SKScene {
             if let mazeNode = spriteNodes[x][y] {
                 mazeNode.run(
                     SKAction.sequence(
-                        [SKAction.colorize(with: SKColor.gray, colorBlendFactor: 1, duration: 0.2),
-                            SKAction.wait(forDuration: actionDelay),
+                        [SKAction.wait(forDuration: actionDelay),
                             SKAction.colorize(with: SKColor.white, colorBlendFactor: 1, duration: 0),
                             SKAction.colorize(with: SKColor.lightGray, colorBlendFactor: 1, duration: 0.3)]
                     )
