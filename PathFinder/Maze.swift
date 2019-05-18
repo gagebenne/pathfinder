@@ -10,7 +10,7 @@ import GameplayKit
 import SpriteKit
 
 struct MazeConstants {
-    static let Dimensions = 9
+    static let Dimensions = 21
 }
 
 class Maze {
@@ -90,6 +90,9 @@ class Maze {
         mazeEnemyNodes = enemyNodes
     }
     
+    // MARK: Methods
+    
+    /// Rebuilds a maze by restoring treasures and enemies.
     func rebuild() {
         treasureNodes = mazeTreasureNodes
         enemyNodes = mazeEnemyNodes

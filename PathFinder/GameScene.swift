@@ -9,17 +9,9 @@
 import SpriteKit
 import GameplayKit
 
+/// An enum for the cardinal directions.
 enum Direction: Int, CaseIterable {
-    case up = 2
-    case down = 1
-    case left = 0
-    case right = 3
-    
-    static func randomDirection() -> Direction {
-        // pick and return a new value
-        let rand = GKRandomSource.sharedRandom().nextInt(upperBound: 3)
-        return Direction(rawValue: rand)!
-    }
+    case left = 0, down, right, up
 }
 
 class GameScene: SKScene {
@@ -27,7 +19,9 @@ class GameScene: SKScene {
     
     /// Holds information about the maze.
     var maze: Maze = Maze()
-    var player: Player = Player()
+    
+    /// Holds information about the player.
+    var player: Player = Player(position: int2(0,0))
     
     /**
         Contains optional sprite nodes that are used to visualize the maze 
@@ -38,33 +32,116 @@ class GameScene: SKScene {
         sprite node is nil.
     */
     @nonobjc var spriteNodes = [[SKSpriteNode?]]()
-    @nonobjc var score = SKLabelNode()
-    @nonobjc var alert = SKLabelNode()
     
     // MARK: Methods
     
     /**
-        Creates a maze object, and creates a visual representation of that maze
-        using sprites.
+        Creates a maze object, creates a visual representation of that maze
+        using sprites, and initializes a new player.
     */
     func createMaze() {
-        print("NEW MAZE")
         maze = Maze()
         generateMazeNodes()
         createPlayer()
     }
     
+    /**
+        Rebuilds the current maze object by restoring treasures and enemies;
+        still creates a visual representation of that maze using sprites,
+        along with a new player.
+     */
     func repeatMaze() {
-//        print("REPEAT MAZE")
         maze.rebuild()
         generateMazeNodes()
         createPlayer()
     }
     
+    /// Creates a new player at the maze's start position.
     func createPlayer() {
-        //print("NEW PLAYER")
         player = Player(position: int2(maze.startNode.gridPosition.x, maze.startNode.gridPosition.y))
         writePlayer()
+    }
+    
+    /// Colors sprite node dark gray to infer leaving that space when animating.
+    func removePlayer() {
+        let playerX = Int(player.position.x)
+        let playerY = Int(player.position.y)
+        spriteNodes[playerX][playerY]?.color = SKColor.darkGray
+    }
+    
+    /// Colors sprite node white to infer arriving at that space when animating.
+    func writePlayer() {
+        let playerX = Int(player.position.x)
+        let playerY = Int(player.position.y)
+        spriteNodes[playerX][playerY]?.color = SKColor.white
+    }
+    
+    /**
+        The core movement method, attempts to move player in a given direction
+        by first checking to see if the game is over 
+     */
+    func attemptPlayerMove(direction: Direction) -> Float? {
+        // Disallow movement if the game is over.
+        if gameOver() {
+            return nil
+        }
+        let playerNode = maze.graph.node(atGridPosition: player.position)!
+        
+        // Move the player after checking to see if the move is indeed valid.
+        if let newNode = move(fromNode: playerNode, direction: direction) {
+            let pastScore = player.score
+            
+            player.move(to: newNode)
+            if let treasureVal = maze.treasureNodes[newNode] {
+                player.foundTreasure(at: newNode, scoreChange: treasureVal)
+                maze.treasureNodes.removeValue(forKey: newNode)
+            }
+            if let enemyVal = maze.enemyNodes[newNode] {
+                player.encounteredEnemy(at: newNode, scoreChange: enemyVal)
+                maze.enemyNodes.removeValue(forKey: newNode)
+            }
+            if gameOver() {
+                player.won()
+            }
+            return player.score - pastScore
+        } else {
+            // Move not allowed.
+            return nil
+        }
+    }
+    
+    func move(fromPos: int2, direction: Direction) -> int2? {
+        let node = maze.graph.node(atGridPosition: fromPos)!
+        
+        if let newNode = move(fromNode: node, direction: direction) {
+            return newNode.gridPosition
+        } else {
+            return nil
+        }
+    }
+    
+    func move(fromNode: GKGridGraphNode, direction: Direction) -> GKGridGraphNode? {
+        let x = fromNode.gridPosition.x
+        let y = fromNode.gridPosition.y
+        
+        switch direction {
+        case .up:
+            return maze.graph.node(atGridPosition: int2(x, y+1))
+        case .down:
+            return maze.graph.node(atGridPosition: int2(x, y-1))
+        case .left:
+            return maze.graph.node(atGridPosition: int2(x-1, y))
+        case .right:
+            return maze.graph.node(atGridPosition: int2(x+1, y))
+        }
+    }
+    
+    func gameOver() -> Bool {
+        return player.position == maze.endNode.gridPosition
+    }
+    
+    func getPlayerPositionNode() -> GKGridGraphNode {
+        return maze.graph.node(atGridPosition: player.position)!
     }
 
     // MARK: SpriteKit Methods
@@ -128,44 +205,40 @@ class GameScene: SKScene {
         spriteNodes[startNodeX][startNodeY]?.color = SKColor.green
         spriteNodes[endNodeX][endNodeY]?.color     = SKColor.red
         
-        //print("\(maze.treasureNodes.count)")
+        // Color the treasure nodes yellow.
         for (treasure, _) in maze.treasureNodes {
             let x = Int(treasure.gridPosition.x)
             let y = Int(treasure.gridPosition.y)
             spriteNodes[x][y]?.color = SKColor.yellow
         }
         
+        // Color the treasure nodes orange.
         for (enemy, _) in maze.enemyNodes {
             let x = Int(enemy.gridPosition.x)
             let y = Int(enemy.gridPosition.y)
             spriteNodes[x][y]?.color = SKColor.orange
         }
-        
-        score.text = "Score: 0"
-        score.position = CGPoint(x: mazeParentNode.size.width/2, y: -cellDimension)
-        mazeParentNode.addChild(score)
     }
     
     /// Animates a solution to the maze.
     func animateSolution(_ solution: [GKGridGraphNode]) {
+        repeatMaze()
         /*
             The animation works by animating sprites with different start delays.
             actionDelay represents this delay, which increases by
             an interval of actionInterval with each iteration of the loop.
         */
         var actionDelay: TimeInterval = 0
-        let actionInterval = 1.0
+        let actionInterval = 0.1
         
         /*
             Light up each sprite in the solution sequence, except for the
             start and end nodes.
         */
-        for i in 1...(solution.count - 2) {
+        for i in 0...(solution.count - 2) {
             // Grab the position of the maze graph node.
             let x = Int(solution[i].gridPosition.x)
             let y = Int(solution[i].gridPosition.y)
-            print("ANIMATE AT \(solution[i].gridPosition)")
-
             
             /*
                 Increment the action delay so this sprite is highlighted
@@ -175,134 +248,39 @@ class GameScene: SKScene {
             
             // Run the animation action on the maze sprite node.
             if let mazeNode = spriteNodes[x][y] {
-                mazeNode.run(
-                    SKAction.sequence(
-                        [SKAction.colorize(with: SKColor.gray, colorBlendFactor: 1, duration: 0.2),
-                            SKAction.wait(forDuration: actionDelay),
-                            SKAction.colorize(with: SKColor.white, colorBlendFactor: 1, duration: 0),
-                            SKAction.colorize(with: SKColor.lightGray, colorBlendFactor: 1, duration: 0.3)]
+                // FIXME: This needs to be better somehow.
+                let nodeXY = maze.graph.node(atGridPosition: int2(Int32(x), Int32(y)))
+                if maze.treasureNodes[nodeXY!] != nil {
+                    mazeNode.run(
+                        SKAction.sequence(
+                            [SKAction.colorize(with: SKColor.yellow, colorBlendFactor: 1, duration: 0.2),
+                             SKAction.wait(forDuration: actionDelay),
+                             SKAction.colorize(with: SKColor.yellow, colorBlendFactor: 1, duration: 0),
+                             SKAction.colorize(with: SKColor.yellow, colorBlendFactor: 1, duration: 0.3)]
+                        )
                     )
-                )
+                } else if maze.enemyNodes[nodeXY!] != nil {
+                    mazeNode.run(
+                        SKAction.sequence(
+                            [SKAction.colorize(with: SKColor.orange, colorBlendFactor: 1, duration: 0.2),
+                             SKAction.wait(forDuration: actionDelay),
+                             SKAction.colorize(with: SKColor.orange, colorBlendFactor: 1, duration: 0),
+                             SKAction.colorize(with: SKColor.orange, colorBlendFactor: 1, duration: 0.3)]
+                        )
+                    )
+                } else {
+                    mazeNode.run(
+                        SKAction.sequence(
+                            [SKAction.colorize(with: SKColor.gray, colorBlendFactor: 1, duration: 0.2),
+                             SKAction.wait(forDuration: actionDelay),
+                             SKAction.colorize(with: SKColor.white, colorBlendFactor: 1, duration: 0),
+                             SKAction.colorize(with: SKColor.lightGray, colorBlendFactor: 1, duration: 0.3)]
+                        )
+                    )
+                }
             }
         }
-    }
-    
-    func removePlayer() {
-        let playerX = Int(player.position.x)
-        let playerY = Int(player.position.y)
-        spriteNodes[playerX][playerY]?.color = SKColor.darkGray
-    }
-    
-    func writePlayer() {
-        let playerX = Int(player.position.x)
-        let playerY = Int(player.position.y)
-        spriteNodes[playerX][playerY]?.color = SKColor.white
-    }
-    
-    func attemptPlayerMove(direction: Direction) -> Float? {
-        if gameOver() {
-            print("GAME OVER")
-            return nil
-        }
-        let playerNode = maze.graph.node(atGridPosition: player.position)!
-        
-        // check to see if move is valid then move player
-        if let newNode = move(fromNode: playerNode, direction: direction) {
-            let pastScore = player.score
-            
-            player.move(to: newNode)
-            if let treasureVal = maze.treasureNodes[newNode] {
-                player.foundTreasure(at: newNode, scoreChange: treasureVal)
-                maze.treasureNodes.removeValue(forKey: newNode)
-                print("\tTREASURE FOUND AT: \(newNode.gridPosition)")
-            }
-            if let enemyVal = maze.enemyNodes[newNode] {
-                player.encounteredEnemy(at: newNode, scoreChange: enemyVal)
-                maze.enemyNodes.removeValue(forKey: newNode)
-            }
-            //print("Score: \(String(player.score))")
-            
-            return player.score - pastScore
-        } else {
-            //print("NOT ALLOWED")
-            return nil
-        }
-    }
-    
-    func move(fromPos: int2, direction: Direction) -> int2? {
-        let node = maze.graph.node(atGridPosition: fromPos)!
-        
-        if let newNode = move(fromNode: node, direction: direction) {
-            return newNode.gridPosition
-        } else {
-            return nil
-        }
-    }
-    
-    func move(fromNode: GKGridGraphNode, direction: Direction) -> GKGridGraphNode? {
-        let x = fromNode.gridPosition.x
-        let y = fromNode.gridPosition.y
-        
-        switch direction {
-        case .up:
-            return maze.graph.node(atGridPosition: int2(x, y+1))
-        case .down:
-            return maze.graph.node(atGridPosition: int2(x, y-1))
-        case .left:
-            return maze.graph.node(atGridPosition: int2(x-1, y))
-        case .right:
-            return maze.graph.node(atGridPosition: int2(x+1, y))
-        }
-    }
-    
-    func gameOver() -> Bool {
-        return player.position == maze.endNode.gridPosition
-    }
-    
-    func getPlayerPositionNode() -> GKGridGraphNode {
-        return maze.graph.node(atGridPosition: player.position)!
     }
 }
 
-// MARK: OS X Input Handling
 
-#if os(OSX)
-    extension GameScene {
-        /**
-            Advances the game by creating a new maze or solving the existing maze if
-            a key press is detected.
-        */
-        override func keyDown(with keyPress: NSEvent) {
-            switch keyPress.keyCode {
-            case 123: // left
-                removePlayer()
-                attemptPlayerMove(direction: .left)
-                writePlayer()
-            case 124: // right
-                removePlayer()
-                attemptPlayerMove(direction: .right)
-                writePlayer()
-            case 125: // down
-                removePlayer()
-                attemptPlayerMove(direction: .down)
-                writePlayer()
-            case 126: // up
-                removePlayer()
-                attemptPlayerMove(direction: .up)
-                writePlayer()
-            case 36:
-                repeatMaze()
-            default:
-                print("Key with number: \(keyPress.keyCode) was pressed")
-            }
-        }
-        
-        /**
-            Advances the game by creating a new maze or solving the existing maze if
-            a click is detected.
-        */
-        override func mouseDown(with _: NSEvent) {
-            createMaze()
-        }
-    }
-#endif
