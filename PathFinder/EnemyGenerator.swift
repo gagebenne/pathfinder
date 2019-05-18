@@ -11,7 +11,7 @@ import GameplayKit
 
 struct EnemyGeneratorConstants {
     /// The cost of encountering an enemy.
-    static let reward = Float(-5.0)
+    static let reward: Float = -5.0
     
     /// Probability (out of 100%) of spawning an enemy at a given node.
     static let probability = 10

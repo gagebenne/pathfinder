@@ -11,7 +11,7 @@ import GameplayKit
 
 struct TreasureSpreaderConstants {
     /// The reward for picking up a treasure.
-    static let reward = Float(20.0)
+    static let reward: Float = 20.0
     
     /// Probability (out of 100%) of burying a treasure at a given node.
     static let probability = 10

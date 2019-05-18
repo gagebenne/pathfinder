@@ -9,15 +9,12 @@
 import SpriteKit
 import GameplayKit
 
+/// An enum for the cardinal directions.
+enum Direction: Int, CaseIterable {
+    case left = 0, down, right, up
+}
+
 class GameScene: SKScene {
-    // MARK: Types
-    
-    /// An enum for the cardinal directions.
-    enum Direction: Int, CaseIterable {
-        case left = 0, down, right, up
-    }
-    
-    
     // MARK: Properties
     
     /// Holds information about the maze.
@@ -102,19 +99,13 @@ class GameScene: SKScene {
             if let enemyVal = maze.enemyNodes[newNode] {
                 player.encounteredEnemy(at: newNode, scoreChange: enemyVal)
                 maze.enemyNodes.removeValue(forKey: newNode)
-                //                print("\tENEMY FOUND AT: \(newNode.gridPosition)")
             }
             if gameOver() {
-                //                print("\t+ -------- + ")
-                //                print("\t| WON GAME | ")
-                //                print("\t+ -------- + ")
-                player.score += 1000
+                player.won()
             }
-            //print("Score: \(String(player.score))")
-            
             return player.score - pastScore
         } else {
-            //print("NOT ALLOWED")
+            // Move not allowed.
             return nil
         }
     }
@@ -292,45 +283,4 @@ class GameScene: SKScene {
     }
 }
 
-// MARK: OS X Input Handling
 
-#if os(OSX)
-    extension GameScene {
-        /**
-            Advances the game by creating a new maze or solving the existing maze if
-            a key press is detected.
-        */
-        override func keyDown(with keyPress: NSEvent) {
-            switch keyPress.keyCode {
-            case 123: // left
-                removePlayer()
-                attemptPlayerMove(direction: .left)
-                writePlayer()
-            case 124: // right
-                removePlayer()
-                attemptPlayerMove(direction: .right)
-                writePlayer()
-            case 125: // down
-                removePlayer()
-                attemptPlayerMove(direction: .down)
-                writePlayer()
-            case 126: // up
-                removePlayer()
-                attemptPlayerMove(direction: .up)
-                writePlayer()
-            case 36:
-                repeatMaze()
-            default:
-                print("Key with number: \(keyPress.keyCode) was pressed")
-            }
-        }
-        
-        /**
-            Advances the game by creating a new maze or solving the existing maze if
-            a click is detected.
-        */
-        override func mouseDown(with _: NSEvent) {
-            createMaze()
-        }
-    }
-#endif

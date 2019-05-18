@@ -25,8 +25,9 @@ class GameViewController: NSViewController {
         
         skView.presentScene(scene)
         
+        // Present entire game scene to QLearning to train and present.
         let ql = QLearning(game: scene)
-        ql.learn(episodes: 1000, view: skView)
+        ql.learn(episodes: 2500, view: skView)
         
         // SpriteKit applies additional optimizations to improve rendering performance.
         skView.ignoresSiblingOrder = true

@@ -12,7 +12,10 @@ import SpriteKit
 
 struct PlayerConstants {
     /// Cost of moving one space.
-    static let reward = Float(-1.0)
+    static let reward: Float = -1.0
+    
+    /// Reward for completing maze
+    static let winReward: Float = 500.0
 }
 
 class Player {
@@ -53,5 +56,10 @@ class Player {
     func encounteredEnemy(at: GKGridGraphNode, scoreChange: Float) {
         enemiesEncountered.insert(at)
         score = score + scoreChange
+    }
+    
+    /// Records if reached the end of the maze and updates score.
+    func won() {
+        score = score + PlayerConstants.winReward
     }
 }
