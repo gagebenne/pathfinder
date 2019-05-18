@@ -18,4 +18,6 @@ We ended up resolving this issue by constructing a more complete concept of "sta
 
 ## Examples
 
+![one](recording1.gif)
+
 ## Conclusion
