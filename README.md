@@ -24,9 +24,7 @@ We ended up resolving this issue by constructing a more complete concept of "sta
 
 *The Q-Learning phase for this 21 by 21 maze with 1000 epochs usually takes around 5 - 15 seconds.  The solution path is the largest weighted directions for a given state derived from the QTable generated after the learning phase.  Our hyperparameters were: alpha of 30%, gamma of 90%, and epsilon of 30%.  Note the deviations off of the most direct route to pick up treasures and increase score.  Other deviations would have proved to be not worthwhile.*
 
-<p align="left"><img src="recording2.gif" alt="gif2" width="100"/></p>
-<p align="center"><img src="recording3.gif" alt="gif3" width="100"/></p>
-<p align="right"><img src="recording4.gif" alt="gif4" width="100"/></p>
+<p align="center"><img src="recording2.gif" alt="gif2" width="200"/> <img src="recording3.gif" alt="gif3" width="200"/> <img src="recording4.gif" alt="gif4" width="200"/></p>
 
 ## Conclusion
 Overall, the algorithm is very consistent at fundamentally solving the maze.  As mentioned previously, we had to get over encountering scary enemies and persuing ghost treasures, but after that was resolved, our algorithm shined.  However, one metric beyond simply solving the maze which we could observe to know the algorithm was performing well was it's long term reward spotting.  We knew if the program would chase down beneficial treasures away from the direct path to the end, fighting enemies along the way, the algorithm was working.  It is easy to identify in the several examples shown the algorithm pursuing long-term goals by picking up treasure off of the most direct path to produce a higher score.  It is rewarding to see the program persue beneficial paths other than simply the maze end.
