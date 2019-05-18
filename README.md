@@ -17,7 +17,6 @@ While it was relatively easy to get our Q-Learning algorithm to correctly find i
 We ended up resolving this issue by constructing a more complete concept of "state" for our maze, which included both the collected treasures and confronted enemies at each point in time. Initially, this was horrendously inefficient. We don't have the exact data, but it is very much possible that our initialization algorithm for our Q-Table was on the order of O((N^2)!) or worse... After a little bit of thought however, it turned out that this was easy enough to move to more of a "make it as you need it" strategy, which provided at least two orders of magnitude of performance enhancement in our basic testing.
 
 ## Examples
-
-![one](recording1.gif)
+<p align="center"><img src="recording1.gif" alt="drawing" width="250"/></p>
 
 ## Conclusion
