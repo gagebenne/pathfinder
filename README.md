@@ -1,14 +1,16 @@
 # Pathfinding with Q-Learning
-*Gage Benne and Andrew Monroe*
+*EECS 738 Project 4*
 
+## Authors
+[Gage Benne](https://www.gagebenne.com) and [Andy Monroe](https://www.andymonroe.dev)
+
+## Introduction
 Built in Apple's Swift programming language, we have developed a simple application that solves mazes with enemies and treasures, that is easily portable across the various Apple platforms.  Navigating the maze involves moving a player and a score system: less one point for every move made, 20 points for finding a treasure, and minus 5 for taking a path through an enemy.  We also wanted to allot a generous reward for actually completing the maze, around 500 points for reaching the end.  Of course, the greater the points, the better the player did.
 
 ## Strategy
-
 We decided to utilize the Q-Learning strategy for solving our maze, which essentially combines a hash table of states (states being a struct of the node and what treasures / enemies are still present), where each value is a hash table of actions, that are each associated with some particular value based on how good that action is expected to be. The "Q-Table" is first randomly populated with values, then tuned and calibrated through a series of steps through the maze, which may be random, or the best known step with current information depending on the epsilon exploration factor. The result of each step then issues a specially-weighted recalculation of value, based on hyperparameters for learning rate (alpha), discount factor (gamma), and a sort of exploration factor (epsilon).
 
 ## Implementation
-
 As always, we decided to challenge ourselves to a new environment for this project, one that we were both unfamiliar with. For this project, that meant coding in Swift via Xcode. To begin, we utilized Apple's [open-source example](https://developer.apple.com/library/archive/samplecode/Pathfinder_GameplayKit/Introduction/Intro.html#//apple_ref/doc/uid/TP40016461) for pathfinding, and then modified it to add treasures, enemies, and our own bespoke Q-Learning pathfinding algorithm.
 
 **For more in depth explination of exact implementation details, feel free to persure the codebase.  Everything is well-documented and thoughtfully organized.**
